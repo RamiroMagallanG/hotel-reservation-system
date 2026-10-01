@@ -22,7 +22,7 @@ public class JwtUtil {
     private final long experation;
 
     public JwtUtil(
-        @Value("${jwt.secretKey}") String secret,
+        @Value("${jwt.secret-key}") String secret,
         @Value("${jwt.expiration}") long expiration
     ) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));

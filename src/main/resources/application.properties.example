@@ -12,5 +12,5 @@ spring.jpa.properties.hibernate.format_sql=true
 
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 
-jwt.secretKey=<secretKey>
+jwt.secret-key=<secretKey>
 jwt.expiration=<expiration>
