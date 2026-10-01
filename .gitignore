@@ -21,3 +21,4 @@ buildNumber.properties
 *.class
 mvnw
 mvnw.cmd
+*.properties
