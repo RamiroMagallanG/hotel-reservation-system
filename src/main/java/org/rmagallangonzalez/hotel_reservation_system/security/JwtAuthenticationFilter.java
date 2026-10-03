@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } 
         
         String jwtToken = authHeader.substring(7);
-        String userEmail = this.jwtUtil.extractEmail(jwtToken);
+        String userEmail = this.jwtUtil.extractPayload(jwtToken).getSubject();
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (!this.userRepository.existsByEmail(userEmail)) throw new EmailNotFoundException("Email not found");
