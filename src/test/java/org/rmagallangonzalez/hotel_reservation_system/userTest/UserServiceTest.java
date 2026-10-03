@@ -16,27 +16,38 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserService;
+import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
 import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailAlreadyExistsException;
 
+/**
+ * Unit Test for the User Service
+ * 
+ *  The UserRepository is mocked to isolate the test from the database
+ * and to control the repository's behavior in each test
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
     private UserService userService;
+    private User user;
     
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.userService = new UserService(userRepository);
+
+        this.user = new User(
+            "Prueba1",
+            "prueba2",
+            "prueba@example.com",
+            "123456",
+            Role.USER,
+            LocalDate.now()
+        );
     }
 
     @Test
-    void saveUserWhenEmailIsNotRegistered() {
-        User user = new User(
-            "Prueba1", "prueba2",
-            "prueba@example.com", "123456",
-            LocalDate.now()
-        );
-
+    void saveUserWhenEmailIsNotRegisteredTest() {
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(false);
         when(userRepository.save(user)).thenReturn(user);
 
@@ -48,13 +59,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void saveUserWhenEmailIsAlreadyRegistered() {
-        User user = new User(
-            "Prueba2", "prueba3",
-            "prueba1@example.com", "123456",
-            LocalDate.now()
-        );
-
+    void saveUserWhenEmailIsAlreadyRegisteredTest() {
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
         
         assertThrows(EmailAlreadyExistsException.class, () -> userService.save(user));
