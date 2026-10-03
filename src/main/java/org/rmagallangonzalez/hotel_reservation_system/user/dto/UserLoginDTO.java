@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 public class UserLoginDTO {
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Email should be valid")
-    @Size(max = 255, message = "El email no puede exceder 255 caracteres")
+    @Size(max = 255, message = "The email cannot exceed 255 characters")
     private String email;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, max = 64, message = "La contraseña debe tener entre 8 y 64 caracteres")
+    @Size(min = 8, max = 64, message = "The password must be between 8 and 64 characters long")
     private String password;
 }

@@ -42,8 +42,6 @@ public class UserController {
     public ResponseEntity<?> registerNewUser(
         @Valid @RequestBody UserRegistrationDTO userRegistrationDTO
     ) {
-        userRegistrationDTO.setRole(User.Role.USER);
-
         return new ResponseEntity<UserResponseDTO>(
             new UserResponseDTO(this.userService.save(userRegistrationDTO.toUser(passwordEncoder))),
             HttpStatus.CREATED

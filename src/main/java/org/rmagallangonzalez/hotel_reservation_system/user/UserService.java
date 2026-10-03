@@ -1,5 +1,6 @@
 package org.rmagallangonzalez.hotel_reservation_system.user;
 
+import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
 import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException("Email '" + user.getEmail() + "' already exists");
         }
+
+        user.setRole(Role.USER);
 
         return userRepository.save(user);
     }
