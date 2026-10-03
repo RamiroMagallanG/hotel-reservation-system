@@ -95,13 +95,13 @@ public class UserLoginTest {
     void incorrectPasswordLoginTest() throws Exception {
         when(userRepository.findByEmail("prueba@example.com")).thenReturn(Optional.of(user));
         performLogin(VALID_EMAIL, INVALID_PASSWORD)
-            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
     void inexistentEmailLoginTest() throws Exception {
         when(userRepository.findByEmail("emailIncorrecto@example.com")).thenReturn(Optional.empty());
         performLogin(NON_EXISTENT_EMAIL, INVALID_PASSWORD)
-            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 }
