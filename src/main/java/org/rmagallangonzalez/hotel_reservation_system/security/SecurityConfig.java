@@ -1,10 +1,7 @@
 package org.rmagallangonzalez.hotel_reservation_system.security;
 
-import java.util.Optional;
-
 import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.common.JwtUtil;
-import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -39,16 +36,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    UserDetailsService userDetailsService(UserRepository userRepository) {
-        return email -> {
-            Optional<User> userOptional = userRepository.findByEmail(email);
+    UserDetailsService userDetailsService() {
+        return email -> userRepository.findByEmail(email)
+            .orElseThrow(() -> 
+                new UsernameNotFoundException("User not found with email: " + email)
+            );
+    }
 
-            if (!userOptional.isPresent()) {
-                throw new UsernameNotFoundException("User not found with email: " + email);
-            }
-
-            return userOptional.get();
-        };
+    @Bean
+    JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtUtil, userRepository);
     }
 
     @Bean
@@ -63,17 +60,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil, userRepository);
-        
+    SecurityFilterChain securityFilterChain(
+        HttpSecurity http, AuthenticationManager authenticationManager,
+        JwtAuthenticationFilter jwtAuth
+    ) throws Exception {
         http
             .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers(HttpMethod.POST, ApiRoutes.LOGIN_URL).permitAll()
-                .requestMatchers(HttpMethod.POST, ApiRoutes.REGISTER_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, ApiRoutes.User.LOGIN_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, ApiRoutes.User.REGISTER_URL).permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtFilter, LogoutFilter.class)
+            .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             .authenticationManager(authenticationManager);
 

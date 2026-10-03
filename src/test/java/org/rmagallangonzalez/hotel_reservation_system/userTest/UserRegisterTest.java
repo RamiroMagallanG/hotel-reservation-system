@@ -1,5 +1,7 @@
 package org.rmagallangonzalez.hotel_reservation_system.userTest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,104 +11,108 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.security.SecurityConfig;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
-import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+/**
+ * Integration test for the registration endpoint
+ * 
+ * The UserRepository is mocked to isolate the tests from the database
+ * and to allow precise control over its behavior in each test scenario.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(SecurityConfig.class)
 public class UserRegisterTest {
+    private static final String FIRST_NAME = "Prueba1";
+    private static final String LAST_NAME = "Prueba1";
+    private static final String EMAIL = "prueba@example.com";
+    private static final String PASSWORD = "ContraseñaValida1";
+    private static final LocalDate DATE_OF_BIRTH = LocalDate.of(2005, 5, 5);
+
     @MockitoBean
     private UserRepository userRepository;
-    @MockitoBean
+    
+    @Autowired
     private PasswordEncoder passwordEncoder;
+    
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void registerNewUser() throws Exception{
-        User user = new User(
-            "Prueba1",
-            "prueba1",
-            "prueba@example.com",
-            "password",
-            Role.USER,
-            LocalDate.parse("2005-05-05")
-        );
-
-        when(passwordEncoder.encode(anyString())).thenReturn("password");
-        when(userRepository.save(user)).thenReturn(user);
-
-        mockMvc.perform(
+    private ResultActions performRegistration() throws Exception{
+        return mockMvc.perform(
             MockMvcRequestBuilders
-            .post(ApiRoutes.REGISTER_URL)
-                .contentType("application/json")
+            .post(ApiRoutes.User.REGISTER_URL)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
+                    String.format(
                     """
                     {
-                        "email": "prueba@example.com",
-                        "password": "123456",
-                        "firstName": "Prueba1",
-                        "lastName": "prueba1",
-                        "dateOfBirth": "2005-05-05"
+                        "email": "%s",
+                        "password": "%s",
+                        "firstName": "%s",
+                        "lastName": "%s",
+                        "dateOfBirth": "%s"
                     }
-                    """
+                    """, 
+                    EMAIL,
+                    PASSWORD,
+                    FIRST_NAME,
+                    LAST_NAME,
+                    DATE_OF_BIRTH
                 )
-        )
-        .andExpect(
-            MockMvcResultMatchers.status().isCreated()
-        )
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.firstName").value("Prueba1")
-        )
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.lastName").value("prueba1")
-        )
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.email").value("prueba@example.com")
+            )
         );
-
-        verify(userRepository).save(user);
-        verify(passwordEncoder).encode("123456");
     }
 
     @Test
-    void registerNewUserWithRepeatedEmail() throws Exception {
-        when(passwordEncoder.encode(anyString())).thenReturn("password");
+    void registerNewUserTest() throws Exception{
+        when(userRepository.save(any(User.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        performRegistration()
+            .andExpect(MockMvcResultMatchers.status().isCreated())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName")
+                .value(FIRST_NAME)
+            )
+            .andExpect(MockMvcResultMatchers.jsonPath("$.lastName")
+                .value(LAST_NAME)
+            )
+            .andExpect(MockMvcResultMatchers.jsonPath("$.email")
+                .value(EMAIL)
+        );
+
+        // I use ArgumentCaptor instead of verify(userRepository).save(user) because the
+        // user created by the controller has a different password hash
+        // than the one in the test, due to the random salt used by the PasswordEncoder.
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+        
+        User userCaptured = userCaptor.getValue();
+        assertTrue(passwordEncoder.matches(PASSWORD, userCaptured.getPassword()));
+    }
+
+    @Test
+    void registerNewUserWithRepeatedEmailTest() throws Exception {
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
-        mockMvc.perform(
-            MockMvcRequestBuilders
-            .post(ApiRoutes.REGISTER_URL)
-                .contentType("application/json")
-                .content(
-                    """
-                    {
-                        "email": "prueba@example.com",
-                        "password": "123456",
-                        "firstName": "Prueba1",
-                        "lastName": "prueba1",
-                        "dateOfBirth": "2005-05-05"
-                    }
-                    """
-                )
-        )
-        .andExpect(
-            MockMvcResultMatchers.status().isConflict()
-        )
-        .andExpect(
-            MockMvcResultMatchers.content().string("Email 'prueba@example.com' already exists")
+        performRegistration()
+            .andExpect(MockMvcResultMatchers.status().isConflict())
+            .andExpect(MockMvcResultMatchers.content()
+                .string("Email 'prueba@example.com' already exists")
         );
     }
 }

@@ -3,23 +3,28 @@ package org.rmagallangonzalez.hotel_reservation_system.user;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
 @Entity
-@NoArgsConstructor(force = true)
 @Table(name = "users")
+@Getter
+@ToString(exclude = "password")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
     public static enum Role {USER, ADMIN, EMPLOYEE}
 
@@ -28,11 +33,18 @@ public class User implements UserDetails {
     private long id;
     private String firstName;
     private String lastName;
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
     private Role role;
     private LocalDate dateOfBirth;
-    private final LocalDate registrationDate = LocalDate.now();
+    @Column(nullable = false, updatable = false)
+    private LocalDate registrationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.registrationDate = LocalDate.now();
+    }
 
     public User(
         String firstName, String lastName, String email,
@@ -42,6 +54,7 @@ public class User implements UserDetails {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.role = Role.USER;
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -55,6 +68,10 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == null) {
+            return Collections.emptyList();
+        }
+
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_" + this.role));
     }
 
