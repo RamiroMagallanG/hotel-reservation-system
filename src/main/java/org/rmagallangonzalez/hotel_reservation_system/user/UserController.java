@@ -2,7 +2,7 @@ package org.rmagallangonzalez.hotel_reservation_system.user;
 
 import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.common.JwtUtil;
-import org.rmagallangonzalez.hotel_reservation_system.user.dto.UserLogedResponseDTO;
+import org.rmagallangonzalez.hotel_reservation_system.user.dto.UserLoggedResponseDTO;
 import org.rmagallangonzalez.hotel_reservation_system.user.dto.UserLoginDTO;
 import org.rmagallangonzalez.hotel_reservation_system.user.dto.UserRegistrationDTO;
 import org.rmagallangonzalez.hotel_reservation_system.user.dto.UserResponseDTO;
@@ -57,8 +57,8 @@ public class UserController {
 
         Authentication authentication = this.authenticationManager.authenticate(authenticationRequest);
         
-        return new ResponseEntity<UserLogedResponseDTO>(
-            new UserLogedResponseDTO(this.jwtUtil.createToken(authentication)),
+        return new ResponseEntity<UserLoggedResponseDTO>(
+            new UserLoggedResponseDTO(this.jwtUtil.createToken(authentication)),
             HttpStatus.OK
         );
     }
