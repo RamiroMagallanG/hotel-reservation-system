@@ -39,8 +39,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Import(SecurityConfig.class)
 public class UserLoginTest {
     private static final String VALID_EMAIL = "prueba@example.com";
-    private static final String VALID_PASSWORD = "123456";
-    private static final String INVALID_PASSWORD = "1234567";
+    private static final String VALID_PASSWORD = "ContraseñaValida1";
+    private static final String INVALID_PASSWORD = "ContraseñaInvalida1";
     private static final String NON_EXISTENT_EMAIL = "emailIncorrecto@example.com";
 
     @MockitoBean
