@@ -69,7 +69,7 @@ public class UserLoginTest {
     private ResultActions performLogin(String email, String password) throws Exception {
         return mockMvc.perform(
             MockMvcRequestBuilders
-            .post(ApiRoutes.LOGIN_URL)
+            .post(ApiRoutes.User.LOGIN_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     String.format(

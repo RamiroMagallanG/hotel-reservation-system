@@ -69,8 +69,8 @@ public class SecurityConfig {
         http
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers(HttpMethod.POST, ApiRoutes.LOGIN_URL).permitAll()
-                .requestMatchers(HttpMethod.POST, ApiRoutes.REGISTER_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, ApiRoutes.User.LOGIN_URL).permitAll()
+                .requestMatchers(HttpMethod.POST, ApiRoutes.User.REGISTER_URL).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, LogoutFilter.class)

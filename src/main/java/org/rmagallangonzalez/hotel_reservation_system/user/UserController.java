@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping(ApiRoutes.USER_URL)
+@RequestMapping(ApiRoutes.User.BASE)
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -38,7 +38,7 @@ public class UserController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping(ApiRoutes.REGISTER)
+    @PostMapping(ApiRoutes.User.REGISTER)
     public ResponseEntity<?> registerNewUser(
         @Valid @RequestBody UserRegistrationDTO userRegistrationDTO
     ) {
@@ -50,7 +50,7 @@ public class UserController {
         );
     }
 
-    @PostMapping(ApiRoutes.LOGIN)
+    @PostMapping(ApiRoutes.User.LOGIN)
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO loginDTO) {
         Authentication authenticationRequest = 
             UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getEmail(), loginDTO.getPassword());

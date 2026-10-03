@@ -55,7 +55,7 @@ public class UserRegisterTest {
     private ResultActions performRegistration() throws Exception{
         return mockMvc.perform(
             MockMvcRequestBuilders
-            .post(ApiRoutes.REGISTER_URL)
+            .post(ApiRoutes.User.REGISTER_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     String.format(
