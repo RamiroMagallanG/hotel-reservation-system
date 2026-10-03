@@ -36,25 +36,22 @@ public class UserController {
     }
 
     @PostMapping(ApiRoutes.User.REGISTER)
-    public ResponseEntity<?> registerNewUser(
-        @Valid @RequestBody UserRegistrationDTO userRegistrationDTO
-    ) {
+    public ResponseEntity<UserResponseDTO> registerNewUser(@Valid @RequestBody UserRegistrationDTO dto) {
+        User savedUser = this.userService.registerNewUser(dto);
+
         return new ResponseEntity<UserResponseDTO>(
-            new UserResponseDTO(this.userService.save(userRegistrationDTO.toUser())),
+            new UserResponseDTO(savedUser),
             HttpStatus.CREATED
         );
     }
 
     @PostMapping(ApiRoutes.User.LOGIN)
-    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO loginDTO) {
+    public ResponseEntity<UserLoggedResponseDTO> loginUser(@Valid @RequestBody UserLoginDTO dto) {
         Authentication authenticationRequest = 
-            UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getEmail(), loginDTO.getPassword());
+            UsernamePasswordAuthenticationToken.unauthenticated(dto.getEmail(), dto.getPassword());
 
         Authentication authentication = this.authenticationManager.authenticate(authenticationRequest);
         
-        return new ResponseEntity<UserLoggedResponseDTO>(
-            new UserLoggedResponseDTO(this.jwtUtil.createToken(authentication)),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(new UserLoggedResponseDTO(this.jwtUtil.createToken(authentication)));
     }
 }

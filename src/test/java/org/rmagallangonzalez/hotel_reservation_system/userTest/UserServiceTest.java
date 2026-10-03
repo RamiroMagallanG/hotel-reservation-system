@@ -14,7 +14,7 @@ import org.rmagallangonzalez.hotel_reservation_system.security.SecurityConfig;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserService;
-import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
+import org.rmagallangonzalez.hotel_reservation_system.user.dto.UserRegistrationDTO;
 import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +31,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 @Import(SecurityConfig.class)
 public class UserServiceTest {
+    private final static String PASSWORD = "ValidPassword1";
+
     @MockitoBean
     private UserRepository userRepository;
     
@@ -39,6 +41,7 @@ public class UserServiceTest {
     private UserService userService;
 
     private User user;
+    private UserRegistrationDTO userDTO;
     
     @BeforeEach
     void setUp() {
@@ -48,31 +51,39 @@ public class UserServiceTest {
             "Prueba1",
             "prueba2",
             "prueba@example.com",
-            "ContraseñaValida1",
-            Role.USER,
-            LocalDate.now()
+            passwordEncoder.encode(PASSWORD),
+            LocalDate.of(2005, 5, 5)
+        );
+
+        this.userDTO = new UserRegistrationDTO(
+            this.user.getFirstName(),
+            this.user.getLastName(),
+            this.user.getEmail(),
+            PASSWORD,
+            this.user.getDateOfBirth()
         );
     }
 
     @Test
     void saveUserWhenEmailIsNotRegisteredTest() {
-        when(userRepository.existsByEmail(user.getEmail())).thenReturn(false);
+        when(userRepository.existsByEmail(userDTO.getEmail())).thenReturn(false);
         when(userRepository.save(user)).thenReturn(user);
 
-        User result = userService.save(user);
+        User result = userService.registerNewUser(userDTO);
 
         assertEquals(user, result);
         verify(userRepository).save(user);
-        verify(userRepository).existsByEmail(user.getEmail());
+        verify(userRepository).existsByEmail(userDTO.getEmail());
     }
 
     @Test
     void saveUserWhenEmailIsAlreadyRegisteredTest() {
-        when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
+        when(userRepository.existsByEmail(userDTO.getEmail())).thenReturn(true);
         
-        assertThrows(EmailAlreadyExistsException.class, () -> userService.save(user));
+        assertThrows(EmailAlreadyExistsException.class, 
+            () -> userService.registerNewUser(userDTO));
 
-        verify(userRepository).existsByEmail(user.getEmail());
+        verify(userRepository).existsByEmail(userDTO.getEmail());
         verify(userRepository, never()).save(user);
     }
 }
