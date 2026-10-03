@@ -40,7 +40,7 @@ public class UserRegisterTest {
     private static final String FIRST_NAME = "Prueba1";
     private static final String LAST_NAME = "Prueba1";
     private static final String EMAIL = "prueba@example.com";
-    private static final String PASSWORD = "123456";
+    private static final String PASSWORD = "ContraseñaValida1";
     private static final LocalDate DATE_OF_BIRTH = LocalDate.of(2005, 5, 5);
 
     @MockitoBean

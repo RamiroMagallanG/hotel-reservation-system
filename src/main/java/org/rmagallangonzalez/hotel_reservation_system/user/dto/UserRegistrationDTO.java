@@ -3,7 +3,6 @@ package org.rmagallangonzalez.hotel_reservation_system.user.dto;
 import java.time.LocalDate;
 
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +21,7 @@ public class UserRegistrationDTO {
     @Email(message = "Email should be valid")
     @Size(max = 255, message = "The email cannot exceed 255 characters")
     private String email;
-    
+
     @NotBlank(message = "Password cannot be blank")
     @Size(min = 8, max = 64, message = "The password must be between 8 and 64 characters long")
     private String password;
@@ -39,7 +38,7 @@ public class UserRegistrationDTO {
     @Past(message = "The date of birth must be in the past")
     private LocalDate dateOfBirth;
 
-    public User toUser(PasswordEncoder passwordEncoder) {
+    public User toUser() {
         User user = new User(
             this.firstName, this.lastName, this.email,
             this.password, this.dateOfBirth

@@ -10,14 +10,17 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.rmagallangonzalez.hotel_reservation_system.security.SecurityConfig;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserService;
 import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
 import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 /**
  * Unit Test for the User Service
@@ -25,22 +28,27 @@ import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailAlread
  *  The UserRepository is mocked to isolate the test from the database
  * and to control the repository's behavior in each test
  */
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Import(SecurityConfig.class)
 public class UserServiceTest {
-    @Mock
+    @MockitoBean
     private UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private UserService userService;
+
     private User user;
     
     @BeforeEach
     void setUp() {
-        this.userService = new UserService(userRepository);
+        this.userService = new UserService(userRepository, passwordEncoder);
 
         this.user = new User(
             "Prueba1",
             "prueba2",
             "prueba@example.com",
-            "123456",
+            "ContraseñaValida1",
             Role.USER,
             LocalDate.now()
         );
