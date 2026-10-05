@@ -61,7 +61,7 @@ public class UserLoginTest {
             "prueba1",
             VALID_EMAIL,
             passwordEncoder.encode(VALID_PASSWORD),
-            Role.USER,
+            Role.CLIENT,
             LocalDate.parse("2005-05-05")
         );
     }

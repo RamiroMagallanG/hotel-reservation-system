@@ -29,7 +29,7 @@ public class UserService {
             dto.getLastName(),
             dto.getEmail(),
             passwordEncoder.encode(dto.getPassword()),
-            Role.USER,
+            Role.CLIENT,
             dto.getDateOfBirth()
         );
 

@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,7 +28,7 @@ import lombok.ToString;
 @ToString(exclude = "password")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
-    public static enum Role {USER, ADMIN, EMPLOYEE}
+    public static enum Role {CLIENT, ADMIN, MANAGER, EMPLOYEE}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +38,7 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
     private LocalDate dateOfBirth;
     @Column(nullable = false, updatable = false)
@@ -54,7 +57,7 @@ public class User implements UserDetails {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.role = Role.USER;
+        this.role = Role.CLIENT;
         this.dateOfBirth = dateOfBirth;
     }
 
