@@ -3,6 +3,7 @@ package org.rmagallangonzalez.hotel_reservation_system.security;
 import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.common.JwtUtil;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
+import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -60,16 +61,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(
-        HttpSecurity http, AuthenticationManager authenticationManager,
-        JwtAuthenticationFilter jwtAuth
-    ) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager,JwtAuthenticationFilter jwtAuth) throws Exception {
         http
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                // ### USER ###
                 .requestMatchers(HttpMethod.POST, ApiRoutes.User.LOGIN_URL).permitAll()
                 .requestMatchers(HttpMethod.POST, ApiRoutes.User.REGISTER_URL).permitAll()
+
+                // ### HOTEL ###
+                .requestMatchers(HttpMethod.POST, ApiRoutes.Hotel.CREATE_HOTEL).hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
+                .requestMatchers(HttpMethod.GET, ApiRoutes.Hotel.BASE + "/{id}").permitAll()
+
+
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)

@@ -22,6 +22,13 @@ public final class ApiRoutes {
         public static final String REGISTER_URL = BASE + REGISTER;
     }
 
+    public static final class Hotel {
+        public static final String BASE = BASE_URL + "/hotel";
+
+        public static final String CREATE = "/create";
+        public static final String CREATE_HOTEL = BASE + CREATE;
+    }
+
     public static final class Admin {
         public static final String BASE = BASE_URL + "/admins";
     }
