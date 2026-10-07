@@ -63,10 +63,7 @@ public class User implements UserDetails {
         this.registrationDate = LocalDate.now();
     }
 
-    public User(
-        String firstName, String lastName, String email,
-        String password, LocalDate dateOfBirth
-    ) {
+    public User(String firstName, String lastName, String email, String password, LocalDate dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -75,10 +72,7 @@ public class User implements UserDetails {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public User(
-        String firstName, String lastName, String email,
-        String password, Role role, LocalDate dateOfBirth
-    ) {
+    public User(String firstName, String lastName, String email, String password, Role role, LocalDate dateOfBirth) {
         this(firstName, lastName, email, password, dateOfBirth);
         this.role = role;
     }

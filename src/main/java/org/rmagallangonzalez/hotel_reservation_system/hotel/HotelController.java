@@ -32,10 +32,9 @@ public class HotelController {
     public ResponseEntity<HotelDataDTO> getMethodName(@PathVariable Long id) {
         return ResponseEntity.ok(new HotelDataDTO(this.hotelService.searchHotel(id)));
     }
-    
 
     @PostMapping(ApiRoutes.Hotel.CREATE)
-    public ResponseEntity<HotelDataDTO> postMethodName(@Valid @RequestBody HotelCreationDTO dto) { 
+    public ResponseEntity<HotelDataDTO> createNewHotel(@Valid @RequestBody HotelCreationDTO dto) { 
         Hotel hotel = this.hotelService.registerNewHotel(dto);
 
         URI location = ServletUriComponentsBuilder

@@ -66,7 +66,7 @@ public class JwtUtil {
             String email = claim.getSubject();
             Date expiration = claim.getExpiration();
 
-            return (email.equals(user.getEmail())) && expiration.before(new Date());
+            return (email.equals(user.getEmail())) && expiration.after(new Date());
         } catch (JwtException ex) {
             return false;
         }
