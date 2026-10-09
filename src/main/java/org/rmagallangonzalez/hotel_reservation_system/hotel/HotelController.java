@@ -43,7 +43,7 @@ public class HotelController {
         );
         Hotel hotel = this.hotelService.registerNewHotel(dto, userLogged);
 
-        HotelStaff hotelStaff = new HotelStaff();
+        Staff hotelStaff = new Staff();
         hotelStaff.setHotel(hotel);
         hotelStaff.setUser(userLogged);
         hotelStaff.setStaffRole(StaffRole.MANAGER);

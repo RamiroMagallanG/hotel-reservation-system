@@ -12,8 +12,8 @@ import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.common.JwtUtil;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.Hotel;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.HotelRepository;
-import org.rmagallangonzalez.hotel_reservation_system.hotel.HotelStaff;
-import org.rmagallangonzalez.hotel_reservation_system.hotel.HotelStaffRepository;
+import org.rmagallangonzalez.hotel_reservation_system.hotel.Staff;
+import org.rmagallangonzalez.hotel_reservation_system.hotel.StaffRepository;
 import org.rmagallangonzalez.hotel_reservation_system.security.SecurityConfig;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
@@ -77,7 +77,7 @@ public class HotelCreationTest {
     @MockitoBean 
     private UserRepository userRepository;
     @MockitoBean 
-    private HotelStaffRepository hotelStaffRepository;
+    private StaffRepository hotelStaffRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -155,7 +155,7 @@ public class HotelCreationTest {
     void createHotelWithAdmin() throws Exception {
         when(this.userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(this.admin));
         when(this.hotelRepository.save(any(Hotel.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(this.hotelStaffRepository.save(any(HotelStaff.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(this.hotelStaffRepository.save(any(Staff.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         creationRequest(this.admin)
             .andExpect(MockMvcResultMatchers.status().isCreated())

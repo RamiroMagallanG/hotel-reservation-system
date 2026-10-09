@@ -12,9 +12,9 @@ import jakarta.transaction.Transactional;
 @Service 
 public class HotelService {
     private final HotelRepository hotelRepository;
-    private final HotelStaffRepository hotelStaffRepository;
+    private final StaffRepository hotelStaffRepository;
 
-    public HotelService(HotelRepository hotelRepository, HotelStaffRepository hotelStaffRepository) {
+    public HotelService(HotelRepository hotelRepository, StaffRepository hotelStaffRepository) {
         this.hotelRepository = hotelRepository;
         this.hotelStaffRepository = hotelStaffRepository;
     }
@@ -23,7 +23,7 @@ public class HotelService {
     public Hotel registerNewHotel(HotelCreationDTO dto, User user) { 
         Hotel hotel = this.hotelRepository.save(dto.toHotel());
 
-        HotelStaff hotelStaff = new HotelStaff();
+        Staff hotelStaff = new Staff();
         hotelStaff.setHotel(hotel);
         hotelStaff.setUser(user);
         hotelStaff.setStaffRole(StaffRole.MANAGER);
