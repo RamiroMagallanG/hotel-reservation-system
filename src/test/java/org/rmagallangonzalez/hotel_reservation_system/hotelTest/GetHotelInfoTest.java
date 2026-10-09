@@ -21,6 +21,15 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+/**
+ * Integration test for the endpoint to get info about a hotel
+ *
+ * @SpringBootTest is used to set up the Spring context, and
+ * @AutoConfigureMockMvc is used to simulate HTTP requests.
+ *  
+ * The HotelRepository is mocked to isolate these tests from the database,
+ * to control the repository's behavior in each scenario.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc 
 @Import(SecurityConfig.class)

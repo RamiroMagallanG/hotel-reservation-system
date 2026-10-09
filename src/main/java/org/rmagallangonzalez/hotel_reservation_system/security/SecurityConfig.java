@@ -3,7 +3,7 @@ package org.rmagallangonzalez.hotel_reservation_system.security;
 import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.common.JwtUtil;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
-import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
+import org.rmagallangonzalez.hotel_reservation_system.user.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, ApiRoutes.User.REGISTER_URL).permitAll()
 
                 // ### HOTEL ###
-                .requestMatchers(HttpMethod.POST, ApiRoutes.Hotel.CREATE_HOTEL).hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
+                .requestMatchers(HttpMethod.POST, ApiRoutes.Hotel.CREATE_HOTEL).hasAnyRole(UserRole.ADMIN.name(), UserRole.STAFF.name())
                 .requestMatchers(HttpMethod.GET, ApiRoutes.Hotel.BASE + "/{id}").permitAll()
 
 

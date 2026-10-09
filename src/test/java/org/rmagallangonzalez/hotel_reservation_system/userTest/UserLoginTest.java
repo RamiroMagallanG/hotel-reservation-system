@@ -11,7 +11,7 @@ import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.security.SecurityConfig;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
-import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
+import org.rmagallangonzalez.hotel_reservation_system.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -61,7 +61,7 @@ public class UserLoginTest {
             "prueba1",
             VALID_EMAIL,
             passwordEncoder.encode(VALID_PASSWORD),
-            Role.CLIENT,
+            UserRole.CLIENT,
             LocalDate.parse("2005-05-05")
         );
     }

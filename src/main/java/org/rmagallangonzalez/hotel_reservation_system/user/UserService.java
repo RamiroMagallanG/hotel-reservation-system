@@ -1,8 +1,10 @@
 package org.rmagallangonzalez.hotel_reservation_system.user;
 
-import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
+import java.util.Optional;
+
 import org.rmagallangonzalez.hotel_reservation_system.user.dto.UserRegistrationDTO;
 import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailAlreadyExistsException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +31,19 @@ public class UserService {
             dto.getLastName(),
             dto.getEmail(),
             passwordEncoder.encode(dto.getPassword()),
-            Role.CLIENT,
+            UserRole.CLIENT,
             dto.getDateOfBirth()
         );
 
         return userRepository.save(user);
+    }
+
+    public User findUser(String email) {
+        Optional<User> user = this.userRepository.findByEmail(email);
+
+        if (user.isEmpty())
+            throw new BadCredentialsException("User with email '" + email + "' not exists");
+
+        return user.get();
     }
 }

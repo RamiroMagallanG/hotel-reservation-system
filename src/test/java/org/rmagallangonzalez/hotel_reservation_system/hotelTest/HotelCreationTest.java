@@ -12,10 +12,12 @@ import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.common.JwtUtil;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.Hotel;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.HotelRepository;
+import org.rmagallangonzalez.hotel_reservation_system.hotel.HotelStaff;
+import org.rmagallangonzalez.hotel_reservation_system.hotel.HotelStaffRepository;
 import org.rmagallangonzalez.hotel_reservation_system.security.SecurityConfig;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserRepository;
-import org.rmagallangonzalez.hotel_reservation_system.user.User.Role;
+import org.rmagallangonzalez.hotel_reservation_system.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -31,6 +33,16 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+/**
+ * Integration test for the endpoint to create hotels
+ * @SpringBootTest is used to set up the Spring context, and
+ * @AutoConfigureMockMvc is used to simulate HTTP requests.
+ * 
+ * HotelRepository and UserRepository are mocked to isolate
+ * them from the database and control their behaviou
+ * 
+ * 
+ */
 @SpringBootTest 
 @AutoConfigureMockMvc 
 @Import(SecurityConfig.class)
@@ -64,6 +76,8 @@ public class HotelCreationTest {
     private HotelRepository hotelRepository;
     @MockitoBean 
     private UserRepository userRepository;
+    @MockitoBean 
+    private HotelStaffRepository hotelStaffRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -121,19 +135,19 @@ public class HotelCreationTest {
         this.manager = new User(
             MANAGER_FIRST_NAME, MANAGER_LAST_NAME, MANAGER_EMAIL,
             this.passwordEncoder.encode(MANAGER_PASSWORD),
-            Role.MANAGER, MANAGER_DATE_OF_BIRTH
+            UserRole.STAFF, MANAGER_DATE_OF_BIRTH
         );
 
         this.admin = new User(
             ADMIN_FIRST_NAME, ADMIN_LAST_NAME, ADMIN_EMAIL,
             passwordEncoder.encode(ADMIN_PASSWORD),
-            Role.ADMIN, ADMIN_DATE_OF_BIRTH
+            UserRole.ADMIN, ADMIN_DATE_OF_BIRTH
         );
 
         this.client = new User(
             CLIENT_FIRST_NAME, CLIENT_LAST_NAME, CLIENT_EMAIL,
             passwordEncoder.encode(CLIENT_PASSWORD),
-            Role.CLIENT, CLIENT_DATE_OF_BIRTH
+            UserRole.CLIENT, CLIENT_DATE_OF_BIRTH
         );
     }
 
@@ -141,6 +155,7 @@ public class HotelCreationTest {
     void createHotelWithAdmin() throws Exception {
         when(this.userRepository.findByEmail(ADMIN_EMAIL)).thenReturn(Optional.of(this.admin));
         when(this.hotelRepository.save(any(Hotel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(this.hotelStaffRepository.save(any(HotelStaff.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         creationRequest(this.admin)
             .andExpect(MockMvcResultMatchers.status().isCreated())

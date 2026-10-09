@@ -32,8 +32,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
-    public enum Role {CLIENT, ADMIN, MANAGER, EMPLOYEE}
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
@@ -50,7 +48,7 @@ public class User implements UserDetails {
     private String password;
     
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private UserRole role;
     
     private LocalDate dateOfBirth;
     
@@ -68,11 +66,11 @@ public class User implements UserDetails {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.role = Role.CLIENT;
+        this.role = UserRole.CLIENT;
         this.dateOfBirth = dateOfBirth;
     }
 
-    public User(String firstName, String lastName, String email, String password, Role role, LocalDate dateOfBirth) {
+    public User(String firstName, String lastName, String email, String password, UserRole role, LocalDate dateOfBirth) {
         this(firstName, lastName, email, password, dateOfBirth);
         this.role = role;
     }
