@@ -59,22 +59,22 @@ public class HotelController {
     }
     
     @GetMapping(ApiRoutes.Hotel.BY_ID)
-    public ResponseEntity<HotelDataDTO> getMethodName(@PathVariable Long id) {
-        return ResponseEntity.ok(new HotelDataDTO(this.hotelService.searchHotel(id)));
+    public ResponseEntity<HotelDataDTO> getMethodName(@PathVariable Long hotelId) {
+        return ResponseEntity.ok(new HotelDataDTO(this.hotelService.searchHotel(hotelId)));
     }
 
     @PutMapping(ApiRoutes.Hotel.BY_ID)
-    @PreAuthorize("hasRole('ADMIN') or @hotelSecurity.isManager(#id, authentication)")
-    public ResponseEntity<HotelDataDTO> modifyHotel(@PathVariable Long id, @RequestBody HotelDataDTO dto) {
-        Hotel hotel = this.hotelService.updateHotel(id, dto);
+    @PreAuthorize("hasRole('ADMIN') or @hotelSecurity.isManager(#hotelId, authentication)")
+    public ResponseEntity<HotelDataDTO> modifyHotel(@PathVariable Long hotelId, @RequestBody HotelDataDTO dto) {
+        Hotel hotel = this.hotelService.updateHotel(hotelId, dto);
         
         return ResponseEntity.accepted().body(new HotelDataDTO(hotel));
     }
 
     @DeleteMapping(ApiRoutes.Hotel.BY_ID)
-    @PreAuthorize("hasRole('ADMIN') or @hotelSecurity.isManager(#id, authentication)")
+    @PreAuthorize("hasRole('ADMIN') or @hotelSecurity.isManager(#hotelId, authentication)")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteHotel(@PathVariable Long id) {
-        this.hotelService.deleteHotel(id);
+    public void deleteHotel(@PathVariable Long hotelId) {
+        this.hotelService.deleteHotel(hotelId);
     }
 }

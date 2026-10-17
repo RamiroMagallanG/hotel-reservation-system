@@ -40,9 +40,16 @@ public class Room {
 
     @ToString.Include
     @Column(nullable = false)
-    private int Capacity;
+    private int capacity;
 
     @ToString.Include
     @Column(nullable = false)
     private BigDecimal pricePerNight;
+
+    public Room(Hotel hotel, String number, int capacity, BigDecimal pricePerNight) {
+        this.hotel = hotel;
+        this.number = number;
+        this.capacity = capacity;
+        this.pricePerNight = pricePerNight;
+    }
 }
