@@ -27,6 +27,12 @@ public final class ApiRoutes {
 
         public static final String CREATE = "/create";
         public static final String CREATE_HOTEL = BASE + CREATE;
+
+        public static final String BY_ID = "/{id}";
+
+        public static final String GET_BY_ID_HOTEL = BASE + BY_ID;
+        public static final String MODIFY_HOTEL = BASE + BY_ID;
+        public static final String DELETE_HOTEL = BASE + BY_ID;
     }
 
     public static final class Admin {

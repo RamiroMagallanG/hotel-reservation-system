@@ -3,6 +3,7 @@ package org.rmagallangonzalez.hotel_reservation_system.hotel;
 import java.util.Optional;
 
 import org.rmagallangonzalez.hotel_reservation_system.hotel.dto.HotelCreationDTO;
+import org.rmagallangonzalez.hotel_reservation_system.hotel.dto.HotelDataDTO;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.exception.HotelNotExistsException;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.springframework.stereotype.Service;
@@ -40,5 +41,27 @@ public class HotelService {
             throw new HotelNotExistsException("The hotel with ID " + id + " does not exist");
 
         return hotel.get();
+    }
+
+    @Transactional 
+    public Hotel updateHotel(long hotelId, HotelDataDTO dto) {
+        Optional<Hotel> aux = this.hotelRepository.findById(hotelId);
+
+        if (aux.isEmpty()) {
+            throw new HotelNotExistsException("Hotel with id " + hotelId + " not exists");
+        }
+
+        Hotel hotel = aux.get();
+        hotel.setAddress(dto.getAddress());
+        hotel.setName(dto.getName());
+        this.hotelRepository.save(hotel);
+
+        return hotel;
+    }
+
+    @Transactional
+    public void deleteHotel(long hotelIde) {
+        Hotel hotel = this.searchHotel(hotelIde);
+        this.hotelRepository.delete(hotel);
     }
 }
