@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.rmagallangonzalez.hotel_reservation_system.common.exceptions.InvalidIdentifierException;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.exception.HotelNotExistsException;
+import org.rmagallangonzalez.hotel_reservation_system.hotel.exception.RoomNotExistsException;
 import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailAlreadyExistsException;
 import org.rmagallangonzalez.hotel_reservation_system.user.exception.EmailNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HotelNotExistsException.class)
     public ResponseEntity<String> handleHotelNotExistsException(HotelNotExistsException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RoomNotExistsException.class)
+    public ResponseEntity<String> handleRoomNotExistsException(RoomNotExistsException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
