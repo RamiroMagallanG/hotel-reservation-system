@@ -30,9 +30,12 @@ public final class ApiRoutes {
 
         public static final String BY_ID = "/{hotelId}";
 
+        public static final String RESERVATIONS = "/reservations";
+
         public static final String GET_BY_ID_HOTEL = BASE + BY_ID;
         public static final String MODIFY_HOTEL = BASE + BY_ID;
         public static final String DELETE_HOTEL = BASE + BY_ID;
+        public static final String GET_RESERVATIONS_BY_HOTEL_ID = GET_BY_ID_HOTEL + RESERVATIONS;
 
         public static final class Room {
             public static final String BASE = Hotel.GET_BY_ID_HOTEL + "/rooms";
@@ -40,6 +43,18 @@ public final class ApiRoutes {
             public static final String BY_ID  = "/{roomId}";
             public static final String GET_BY_ID_ROOM = BASE + BY_ID;
         }
+
+    }
+
+    public static final class Reservation {
+        public static final String BASE = BASE_URL + "/reservation";
+
+        public static final String BY_ID = "/{reservationId}";
+        public static final String BY_ME = "/me";
+
+        public static final String GET_BY_ID_RESERVATION = BASE + BY_ID;
+        public static final String GET_BY_ME_RESERVATION = BASE + BY_ME;
+        public static final String CANCEL_RESERVATION_BY_ID = BASE + BY_ID;
 
     }
 

@@ -12,6 +12,8 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
 
     List<Reservation> findByRoomHotelId(long id);
 
+    List<Reservation> findByUserEmail(String email);
+
     @Query("""
         SELECT count(r) > 0 FROM Reservation r
         WHERE r.room.id = :roomId

@@ -1,10 +1,14 @@
 package org.rmagallangonzalez.hotel_reservation_system.hotel;
 
 import java.net.URI;
+import java.util.List;
 
 import org.rmagallangonzalez.hotel_reservation_system.common.ApiRoutes;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.dto.HotelCreationDTO;
 import org.rmagallangonzalez.hotel_reservation_system.hotel.dto.HotelDataDTO;
+import org.rmagallangonzalez.hotel_reservation_system.reservation.Reservation;
+import org.rmagallangonzalez.hotel_reservation_system.reservation.ReservationService;
+import org.rmagallangonzalez.hotel_reservation_system.reservation.dto.ReservationResponseDTO;
 import org.rmagallangonzalez.hotel_reservation_system.user.User;
 import org.rmagallangonzalez.hotel_reservation_system.user.UserService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,16 +29,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
 @RestController 
 @RequestMapping(ApiRoutes.Hotel.BASE)
 public class HotelController {
     private final HotelService hotelService;
     private final UserService userService;
+    private final ReservationService reservationService;
 
-    public HotelController(HotelService hotelService, UserService userService) {
+    public HotelController(HotelService hotelService, UserService userService, ReservationService reservationService) {
         this.hotelService = hotelService;
         this.userService = userService;
+        this.reservationService = reservationService;
     }
 
     @PostMapping(ApiRoutes.Hotel.CREATE)
@@ -76,5 +81,13 @@ public class HotelController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteHotel(@PathVariable Long hotelId) {
         this.hotelService.deleteHotel(hotelId);
+    }
+
+    @GetMapping(ApiRoutes.Hotel.GET_RESERVATIONS_BY_HOTEL_ID)
+    @PreAuthorize("hasRole('ADMIN') or @hotelSecurity.isManager(#hotelId, authentication)")
+    public ResponseEntity<List<ReservationResponseDTO>> getReservationsByHotel(@PathVariable long hotelId) {
+        List<Reservation> reservationsByHotel = this.reservationService.getReservations(hotelId);
+
+        return ResponseEntity.ok(reservationsByHotel.stream().map(ReservationResponseDTO::of).toList());
     }
 }
