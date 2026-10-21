@@ -17,8 +17,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -26,6 +28,7 @@ import lombok.ToString;
 @Getter 
 @Setter 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(onlyExplicitlyIncluded = true)
 @Table(name = "reservation")
 public class Reservation {
@@ -55,4 +58,13 @@ public class Reservation {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public Reservation(User user, Room room, LocalDate checkIn, LocalDate checkout) {
+        this.user = user;
+        this.room = room;
+        this.checkIn = checkIn;
+        this.checkOut = checkout;
+        this.status = ReservationStatus.CONFIRMED;
+        this.createdAt = LocalDateTime.now();
+    }
 }
